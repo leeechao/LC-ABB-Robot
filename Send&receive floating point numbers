@@ -1,0 +1,30 @@
+!********************************************************************************
+    ! Description:
+    ! 	Send a real number by the group output
+    ! Parameters:
+    !   num     :nRealNum(real number)
+    !   signalgo: GO_Temp (group outputs:send our-byte float num raw byte)
+    PROC rSend(num nRealNum,VAR signalgo GO_Temp)
+        VAR rawbytes raw_DA;
+        VAR dnum dn_temp;
+        !---send data
+        ClearRawBytes raw_DA;
+        PackRawBytes nRealNum,raw_DA,1\Float4;
+        UnpackRawBytes raw_DA\Network,1,dn_temp\INTX:=UDINT;
+        SetGO GO_Temp,dn_temp;
+    ENDPROC
+
+    !********************************************************************************
+    ! Description:
+    ! 	Receive a real number by the group output
+    ! Parameters:
+    !   num     :nRealNum(real number)
+    !   signalgo: GI_Temp(group inputs:receive four-byte float num raw byte)
+    PROC rReceive(INOUT num nRealNum,VAR signalgi GI_Temp)
+        VAR rawbytes raw_DA;
+        VAR num nTemp;
+        ClearRawBytes raw_DA;
+        PackRawBytes GInputDnum(GI_Temp),raw_DA\Network,1\INTX:=UDINT;
+        UnpackRawBytes raw_DA,1,nTemp\float4;
+        nRealNum:=nTemp;
+    ENDPROC
